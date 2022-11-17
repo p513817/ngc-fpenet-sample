@@ -1,13 +1,24 @@
+![cover](./figures/face-recognition.png)
+
 # ngc-fpenet-sample
+This is a python sample for face recognition by using opencv face detector and NVIDAI NGC fpenet to get landmark.
 
+## Requirement
+* Docker
+* nvidia-container
 
-## Workflow
+## Environment
 ```bash
 # Build Docker Image
 ./docker/build.sh
 
 # Activate Docker Container
 ./docker/run.sh
+```
+
+## Workflow
+```bash
+# Make sure you already in docker container
 
 # Download FPENet
 cd /workspace
@@ -25,6 +36,9 @@ wget 'https://api.ngc.nvidia.com/v2/models/nvidia/tao/fpenet/versions/deployable
 cd /workspace
 python3 demo.py -m all -f ./haarcascade_frontalface_default.xml -l ./fpenet_b1_fp32.trt -s /dev/video0
 ```
+
+## Demo
+![demo](./figures/landmark.png)
 
 ## Reference
 https://forums.developer.nvidia.com/t/how-to-do-inference-with-fpenet-fp32-trt/170909/11
