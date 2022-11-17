@@ -1,3 +1,7 @@
 model/*.etlt
 model/*.trt
 model/*.engine
+data
+face-data
+db.json
+__pycache__
