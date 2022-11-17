@@ -1,60 +1,8 @@
-import cv2
+import time, cv2
 import numpy as np
-import pycuda
 import pycuda.driver as cuda
-# import pycuda.autoinit
 import tensorrt as trt
-import time
-
 from PIL import Image
-
-"""
-
-- NGC
-https://catalog.ngc.nvidia.com/orgs/nvidia/teams/tao/models/fpenet
-
-
-- OpenCV FaceModel
-https://github.com/opencv/opencv/blob/master/data/haarcascades/haarcascade_frontalface_default.xml
-
-- Download Model
-wget 'https://api.ngc.nvidia.com/v2/models/nvidia/tao/fpenet/versions/deployable_v1.0/files/model.etlt'
-
-- Convert
-./converter/tao-converter -t fp32 \
--k nvidia_tlt \
--p input_face_images:0,1x1x80x80,1x1x80x80,2x1x80x80 \
--b 1 \
--e /workspace/fpenet_b1_fp32.trt \
-/workspace/model.etlt
-
-- Inspect
-polygraphy inspect model ./fpenet_b1_fp32.trt --model-type engine
-
-[I] Loading bytes from /workspace/fpenet_b1_fp32.trt
-[I] ==== TensorRT Engine ====
-    Name: Unnamed Network 0 | Explicit Batch Engine (48 layers)
-    
-    ---- 1 Engine Inputs ----
-    {input_face_images:0 [dtype=float32, shape=(-1, 1, 80, 80)]}
-    
-    ---- 2 Engine Outputs ----
-    {softargmax/strided_slice:0 [dtype=float32, shape=(-1, 80, 2)],
-     softargmax/strided_slice_1:0 [dtype=float32, shape=(-1, 80)]}
-    
-    ---- Memory ----
-    Device Memory: 15833600 bytes
-    
-    ---- 1 Profiles (3 Bindings Each) ----
-    - Profile: 0
-        Binding Index: 0 (Input)  [Name: input_face_images:0]          | Shapes: min=(1, 1, 80, 80), opt=(1, 1, 80, 80), max=(2, 1, 80, 80)
-        Binding Index: 1 (Output) [Name: softargmax/strided_slice:0]   | Shape: (-1, 80, 2)    Binding Index: 2 (Output) [Name: softargmax/strided_slice_1:0] | Shape: (-1, 80)
-
-- Source Code
-https://forums.developer.nvidia.com/t/how-to-do-inference-with-fpenet-fp32-trt/170909/11
-
-"""
-
 
 # Helper Function
 class HostDeviceMem(object):
@@ -206,6 +154,9 @@ class FpeNet(object):
             cv2.circle(visualized, (x, y), 1, (0, 255, 0), 1)
         return visualized
 
+    def __del__(self):
+        self.clear_runtime()
+
 def face_detector(model, source):
     # Face Model
     detector = cv2.CascadeClassifier(model)
@@ -228,7 +179,6 @@ def face_detector(model, source):
 
     cv2.destroyAllWindows()
     cap.release()
-
 
 def lm_detector(model, source):
 
@@ -318,9 +268,9 @@ def get_arguments():
                                 choices=[FACE, LM, ALL], 
                                 default='both', required=True )
     arg_parser.add_argument(    '-f', '--face', type=str, 
-                                default='./haarcascade_frontalface_default.xml')
+                                default='./model/haarcascade_frontalface_default.xml')
     arg_parser.add_argument(    '-l', '--lm', type=str, 
-                                default='./fpenet_b1_fp32.trt')
+                                default='./model/fpenet_b1_fp32.trt')
     arg_parser.add_argument(    '-s', '--source', type=str, 
                                 default='/dev/video0')
     return arg_parser.parse_args()    
