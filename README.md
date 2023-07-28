@@ -1,15 +1,8 @@
-![cover](./figures/face-recognition.png)
-
 # ngc-fpenet-sample
 This is a python sample for face recognition by using opencv face detector and NVIDAI NGC fpenet to get landmark.
 
-<<<<<<< HEAD
-![img](assets/ngc-fpenet.gif)
-=======
-## Requirement
-* Docker
-* nvidia-container
->>>>>>> 629ca691893b02bc71dd076e4fac206fee0b8179
+![cover](figures/face-recognition.png)
+![img](figures/ngc-fpenet.gif)
 
 ## Environment
 ```bash
