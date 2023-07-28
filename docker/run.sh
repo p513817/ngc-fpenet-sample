@@ -10,3 +10,5 @@ docker run --gpus=all \
 --net=host --ipc=host \
 --privileged -v /dev:/dev \
 fpenet-sample
+
+exit
